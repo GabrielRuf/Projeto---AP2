@@ -9,16 +9,31 @@ struct usuario
 	
 }usuarios[20];
 
-
+int buscar(usuario *Usuarios,int pos,char *cpf)
+{
+	int i,result;
+	for(i=0;i<pos;i++)
+	{
+		result = strcmp(Usuarios[i].cpf,cpf);
+		if (result == 0)
+			return i;
+	}
+	return -1;
+}
 
 void incluir_usuario(usuario *Usuarios,int *qtdCadastro) //Falta fazer a verificação do CPF!!!!
 {
 	system("cls");
-	
+	char cpf[40];
 	struct usuario user;
+	int aut;
 	fflush(stdin);
 	printf("Digite o CPF :");
-	gets(user.cpf);
+	gets(cpf);
+	
+	aut = buscar(Usuarios,*qtdCadastro,cpf);
+	
+	
 	fflush(stdin);
 	printf("Digite o Nome :");
 	gets(user.nome);
@@ -53,36 +68,45 @@ void listarT_usuario(usuario *Usuarios,int pos)
 	system("cls");
 	
 	int i=0;
-	for(i=0;i<pos;i++)
+	if (pos > 0)
 	{
-		printf("Listando %dº usuário \n",i+1);
-		printf("Nome :\n");
-		puts(Usuarios[i].nome);
-		printf("\n");
-		printf("CPF :\n");
-		puts(Usuarios[i].cpf);
-		printf("\n");
-		printf("Número :\n");
-		puts(Usuarios[i].nro);
-		printf("\n");
-		printf("CEP :\n");
-		puts(Usuarios[i].cep);
-		printf("\n");
-		printf("Email(s) :\n");
-		puts(Usuarios[i].emails[0]);
-		printf("\n");
-		printf("Telefone(s) :\n");
-		puts(Usuarios[i].telefone[0]);
-		printf("\n");
-		printf("Data de nascimento :\n");
-		puts(Usuarios[i].datanasc);
-		printf("\n");
-		printf("Profissão :\n");
-		puts(Usuarios[i].profissao);
-		printf("\n");
-		printf("\n");
-	}
+		for(i=0;i<pos;i++)
+		{
+			printf("Listando %dº usuário \n",i+1);
+			printf("Nome :\n");
+			puts(Usuarios[i].nome);
+			printf("\n");
+			printf("CPF :\n");
+			puts(Usuarios[i].cpf);
+			printf("\n");
+			printf("Número :\n");
+			puts(Usuarios[i].nro);
+			printf("\n");
+			printf("CEP :\n");
+			puts(Usuarios[i].cep);
+			printf("\n");
+			printf("Email(s) :\n");
+			puts(Usuarios[i].emails[0]);
+			printf("\n");
+			printf("Telefone(s) :\n");
+			puts(Usuarios[i].telefone[0]);
+			printf("\n");
+			printf("Data de nascimento :\n");
+			puts(Usuarios[i].datanasc);
+			printf("\n");
+			printf("Profissão :\n");
+			puts(Usuarios[i].profissao);
+			printf("\n");
+			printf("\n");
+		}
 	system("pause");
+	}
+	else
+	{
+		printf("Sem cadastros disponiveis !");
+		system("pause");
+	}
+	
 }
 int listarE_usuario(usuario *Usuarios,int pos)
 {
@@ -157,6 +181,12 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 	
 }
 
+/*void alterar_usuario(usuario *Vetor,int pos)
+{
+	int i;
+	for(i=o;i<pos)
+}*/
+
 int menu()
 {
 	system("cls");
@@ -201,7 +231,7 @@ void submenu_usuarios(int *pos)
 			incluir_usuario(usuarios,pos);
 			break;
 		case 4:
-			//alterar_usuario();
+			//alterar_usuario(usuarios,*pos);
 			break;
 		case 5:
 			excluir_usuario(usuarios,pos);
