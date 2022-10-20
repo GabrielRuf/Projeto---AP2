@@ -9,6 +9,13 @@ struct usuario
 	
 }usuarios[20];
 
+struct livro
+{
+    char titulo[40], genero[40], autor[40],isbn[13],num_pagina[5]; 
+}livros[20];
+
+
+
 int buscar(usuario *Usuarios,int pos,char *cpf)
 {
 	int i,result;
@@ -280,6 +287,53 @@ void alterar_usuario(usuario *Vetor,int pos)
 		system("pause");
 	}
 }
+
+int buscar_livro(livro *livros, int pos, char *isbn)
+{
+  int i, result;
+  for(i=0; i,pos; i++)
+  {
+    result = strcmp(livros[i].isbn,isbn);
+    if (result == 0)
+      return i;
+  }
+  return -1;
+}
+
+void adicionar_livro(livro *livros, int *qtdCadastro)
+{
+  system("cls");
+  char isbn[13];
+  struct livro user;
+  int aut;
+  fflush(stdin);
+  printf("DIgite o ISBN do livro: ");
+  gets(isbn);
+
+  aut = buscar_livro(livros, *qtdCadastro,isbn);
+  
+
+  fflush(stdin);
+  printf("Digite o título do livro: ");
+  gets(user.titulo);
+
+  fflush(stdin);
+  printf("Digite o gênero do livro: ");
+  gets(user.genero);
+
+  fflush(stdin);
+  printf("Digite o autor do livro - Se for mais de um, coloque  / na frente: ");
+  gets(user.autor);
+
+  fflush(stdin);
+  printf("Digite o número de páginas: ");
+  gets(user.num_pagina);
+
+  fflush(stdin);
+
+  livros[*qtdCadastro] = user;
+  (*qtdCadastro)++;
+ }
 
 int menu()
 {
