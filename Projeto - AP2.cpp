@@ -11,10 +11,8 @@ struct usuario
 
 struct livro
 {
-    char titulo[40], genero[40], autor[40],isbn[13],num_pagina[5]; 
+    char titulo[40], genero[40], autor[3][40],isbn[13],num_pagina[5]; 
 }livros[20];
-
-
 
 int buscar(usuario *Usuarios,int pos,char *cpf)
 {
@@ -75,7 +73,6 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 		printf("Usuário já está cadastrado !\n\n");
 	
 	system("pause");
-	
 }
 
 void listarT_usuario(usuario *Usuarios,int pos)
@@ -121,8 +118,8 @@ void listarT_usuario(usuario *Usuarios,int pos)
 		printf("Sem cadastros disponiveis !");
 		system("pause");
 	}
-	
 }
+
 int listarE_usuario(usuario *Usuarios,int pos)
 {
 	int i,comparacao;
@@ -166,7 +163,6 @@ int listarE_usuario(usuario *Usuarios,int pos)
 			return 1;	
 		}
 	}
-	
 	return -1;
 }
 
@@ -194,7 +190,6 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 		}
 		
 	}
-	
 }
 
 void alterar_usuario(usuario *Vetor,int pos)
@@ -291,7 +286,7 @@ void alterar_usuario(usuario *Vetor,int pos)
 int buscar_livro(livro *livros, int pos, char *isbn)
 {
   int i, result;
-  for(i=0; i,pos; i++)
+  for(i=0; i<pos; i++)
   {
     result = strcmp(livros[i].isbn,isbn);
     if (result == 0)
@@ -323,7 +318,7 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 
   fflush(stdin);
   printf("Digite o autor do livro - Se for mais de um, coloque  / na frente: ");
-  gets(user.autor);
+  gets(user.autor[0]);
 
   fflush(stdin);
   printf("Digite o número de páginas: ");
@@ -334,6 +329,165 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
   livros[*qtdCadastro] = user;
   (*qtdCadastro)++;
  }
+
+void listarT_livro(livro *livros, int pos)
+{
+    system("cls");
+    int i=0;
+    if (pos >0){
+        for (i=0; i<pos; i++){
+            printf("Listando %d° livro\n", i+1);
+            printf("Título :\n");
+            puts(livros[i].titulo);
+            printf("\n");
+            printf("ISBN :\n");
+            puts(livros[i].isbn);
+            printf("\n");
+            printf("Gênero :\n");
+            puts(livros[i].genero);
+            printf("\n");
+            printf("Autor :\n");
+            puts(livros[i].autor[0]);
+            printf("\n");
+            printf("Número de páginas :\n");
+            puts(livros[i].num_pagina);
+        }
+        system("pause");
+    }
+    else{
+        printf("Sem cadastros disponiveis !");
+        system("pause");
+    }
+}
+
+int listarE_livros(livro *livros, int pos){
+    int i, comparacao;
+    char isbn[13];
+    system("cls");
+    printf("Digite o ISBN do livro: \n");
+    fflush(stdin);
+    gets(isbn);
+    
+    for (i=0;i<pos;i++){
+        comparacao = strcmp(livros[i].isbn,isbn);
+        if(comparacao == 0){
+            system("cls");
+            printf("Listando livro \n");
+             printf("Título :\n");
+            puts(livros[i].titulo);
+            printf("\n");
+            printf("ISBN :\n");
+            puts(livros[i].isbn);
+            printf("\n");
+            printf("Gênero :\n");
+            puts(livros[i].genero);
+            printf("\n");
+            printf("Autor :\n");
+            puts(livros[i].autor[0]);
+            printf("\n");
+            printf("Número de páginas :\n");
+            puts(livros[i].num_pagina);
+            return 1;
+        }
+    }
+    return -1;
+}
+
+int excluir_livro(livro *livros,int *pos)  
+{
+	int i,comparacao,j;
+	char isbn[13];
+	system("cls");
+	printf("Digite o ISBN do usuário :\n");
+	fflush(stdin);
+	gets(isbn);
+	
+	for(i=0;i<*pos;i++)
+	{
+		comparacao = strcmp(livros[i].isbn,isbn);
+		if(comparacao == 0)
+		{
+			for(j=0;j<*pos;j++)
+			{
+				livros[j] = livros[j+1];
+			}
+			(*pos)--;
+			
+			return 1;
+		}
+		
+	}
+	
+}
+
+void alterar_livro(livro *Vetor, int pos)
+{
+    char isbn[13];
+    int posicao, op;
+    system("cls");
+    printf("Digite o ISBN :\n");
+    fflush(stdin);
+    gets(isbn);
+    
+    posicao = buscar(Vetor,pos,isbn);
+    
+    if (posicao "= -1"){
+        do
+        {
+            printf("O que deseja alterar ?\n\n");
+            printf("1. ISBN\n");
+			printf("2. Título\n");
+			printf("3. Gênero\n");
+			printf("4. Autor(s)\n");
+     		printf("5. Número de páginas\n");
+     		
+     		scanf("%d", &op);
+     		fflush(stdin);
+     		system("cls");
+     		switch(op)
+     		{
+     		    case 1:
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].isbn);
+     		        printf("Dado alterado com sucesso !\n\n");
+     		        system("pause");
+     		        break;
+     		    case 2:
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].titulo);
+     		        printf("Dado alterado com sucesso !\n\n");
+     		        system("pause");
+     		        break;
+     		    case 3:
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].genero);
+     		        printf("Dado alterado com sucesso !\n\n");
+     		        system("pause");
+     		        break;
+     		    case 4:
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].autor[0]);
+     		        printf("Dado alteradocom sucesso !\n\n");
+     		        system("pause");
+     		        break;
+     		    case 5:
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].num_pagina);
+     		        printf("Dado alteradocom sucesso !\n\n");
+     		        system("pause");
+     		        break;
+     		    default:
+     		        printf("opção inválida !");
+     		        system("pause");
+     		}
+        } while (op>8 || op <=0);
+    }
+    else
+    {
+        printf("Livro não cadastrado !\n\n");
+        system("pause");
+    }
+}
 
 int menu()
 {
@@ -350,6 +504,8 @@ int menu()
 	scanf("%d",&op);
 	return op;
 }
+
+
 void submenu_usuarios(int *pos)
 {
 	system("cls");
@@ -367,7 +523,6 @@ void submenu_usuarios(int *pos)
 	{
 		case 1:
 			listarT_usuario(usuarios,*pos);
-			
 			break;
 		case 2:
 			flag = listarE_usuario(usuarios,*pos);
@@ -391,6 +546,46 @@ void submenu_usuarios(int *pos)
 	}
 }
 
+void submenu_livros(int *pos)
+{
+    system("cls");
+    int op, flag;
+    printf("---------Submenu Livros---------");
+    printf("\n1. Listar todos\n");
+ 	printf("2. Listar especifico\n");
+ 	printf("3. Adicionar livro\n");
+	printf("4. Alterar livro\n");
+ 	printf("5. Excluir\n");
+ 	printf("-----------------------------------\n\n");
+ 	
+ 	scanf("%d", &op);
+ 	switch(op)
+ 	{
+ 	    case 1:
+ 	        listarT_livro(livros, *pos);
+ 	        break;
+ 	    case 2:
+ 	        flag = listarE_livros(usuarios, *pos);
+ 	        if (flag == -1)
+ 	            printf("Livro não cadastrado!\n");
+ 	            system("pause");
+ 	            break;
+ 	    case 3:
+ 	        adicionar_livro(livros, *pos);
+ 	        break;
+ 	    case 4:
+ 	        alterar_livro(livros, *pos);
+ 	        break;
+ 	    case 5:
+ 	        excluir_livro(livros, *pos);
+ 	        break;
+ 	    default:
+ 	        printf("Opção inválida !\n");
+ 	        system("pause");
+ 	        break;
+ 	}
+}
+
 int main()
 {
 	int op,pos=0;
@@ -405,7 +600,7 @@ int main()
 				submenu_usuarios(&pos);
 				break;
 			case 2:
-				//submenu_livros();
+				submenu_livros(&pos);
 				break;
 			case 3:
 				//submenu_emprestimos();
@@ -424,3 +619,5 @@ int main()
 	}while(op!=5);
 	
 }
+
+
