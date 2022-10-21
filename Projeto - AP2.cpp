@@ -54,7 +54,7 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 		printf("Digite o(s) email(s) :"); //Falta incluir repetição para colocar mais de 1 se quiser!!!
 		gets(user.emails[0]);
 		fflush(stdin);
-		printf("Digite o(s) telefone(s) :");
+		printf("Digite o(s) telefone(s) :"); //Falta incluir repetição para colocar mais de 1 se quiser!!!
 		gets(user.telefone[0]);
 		fflush(stdin);
 		printf("Digite o data de nascimento dd/mm/aa :");
@@ -299,7 +299,7 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 {
   system("cls");
   char isbn[13];
-  struct livro user;
+  struct livro book;
   int aut;
   fflush(stdin);
   printf("DIgite o ISBN do livro: ");
@@ -307,27 +307,33 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 
   aut = buscar_livro(livros, *qtdCadastro,isbn);
   
-
-  fflush(stdin);
-  printf("Digite o título do livro: ");
-  gets(user.titulo);
-
-  fflush(stdin);
-  printf("Digite o gênero do livro: ");
-  gets(user.genero);
-
-  fflush(stdin);
-  printf("Digite o autor do livro - Se for mais de um, coloque  / na frente: ");
-  gets(user.autor[0]);
-
-  fflush(stdin);
-  printf("Digite o número de páginas: ");
-  gets(user.num_pagina);
-
-  fflush(stdin);
-
-  livros[*qtdCadastro] = user;
-  (*qtdCadastro)++;
+  if(aut == -1)
+  {
+	strcpy(book.isbn,isbn);
+	fflush(stdin);
+	printf("Digite o título do livro: ");
+	gets(book.titulo);
+	
+	fflush(stdin);
+	printf("Digite o gênero do livro: ");
+	gets(book.genero);
+	
+	fflush(stdin);
+	printf("Digite o autor do livro - Se for mais de um, coloque  / na frente: "); //Falta incluir repetição para colocar mais de 1 se quiser!!!
+	gets(book.autor[0]);
+	
+	fflush(stdin);
+	printf("Digite o número de páginas: ");
+	gets(book.num_pagina);
+	
+	fflush(stdin);
+	
+	livros[*qtdCadastro] = book;
+	(*qtdCadastro)++;
+  }
+  else
+  	printf("Livro já está cadastrado !\n\n");
+  system("pause");
  }
 
 void listarT_livro(livro *livros, int pos)
@@ -429,9 +435,9 @@ void alterar_livro(livro *Vetor, int pos)
     fflush(stdin);
     gets(isbn);
     
-    posicao = buscar(Vetor,pos,isbn);
+    posicao = buscar_livro(Vetor,pos,isbn);
     
-    if (posicao "= -1"){
+    if (posicao != -1){
         do
         {
             printf("O que deseja alterar ?\n\n");
@@ -465,7 +471,7 @@ void alterar_livro(livro *Vetor, int pos)
      		        system("pause");
      		        break;
      		    case 4:
-     		        printf("\n\n Digite o novo dado :\n\n");
+     		        printf("\n\n Digite o novo dado :\n\n");//Falta incluir repetição para colocar mais de 1 se quiser!!!
      		        gets(Vetor[posicao].autor[0]);
      		        printf("Dado alteradocom sucesso !\n\n");
      		        system("pause");
@@ -565,19 +571,19 @@ void submenu_livros(int *pos)
  	        listarT_livro(livros, *pos);
  	        break;
  	    case 2:
- 	        flag = listarE_livros(usuarios, *pos);
+ 	        flag = listarE_livros(livros, *pos);
  	        if (flag == -1)
  	            printf("Livro não cadastrado!\n");
  	            system("pause");
  	            break;
  	    case 3:
- 	        adicionar_livro(livros, *pos);
+ 	        adicionar_livro(livros, pos);
  	        break;
  	    case 4:
  	        alterar_livro(livros, *pos);
  	        break;
  	    case 5:
- 	        excluir_livro(livros, *pos);
+ 	        excluir_livro(livros, pos);
  	        break;
  	    default:
  	        printf("Opção inválida !\n");
