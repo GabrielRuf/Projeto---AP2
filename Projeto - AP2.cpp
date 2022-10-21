@@ -14,6 +14,13 @@ struct livro
     char titulo[40], genero[40], autor[3][40],isbn[13],num_pagina[5]; 
 }livros[20];
 
+
+struct emprestimo
+{
+	char chave_emprestimos[3][40],datadevolucao[10],valormulta[4];
+}emprestimos[20];
+
+
 int buscar(usuario *Usuarios,int pos,char *cpf)
 {
 	int i,result;
@@ -25,6 +32,104 @@ int buscar(usuario *Usuarios,int pos,char *cpf)
 	}
 	return -1;
 }
+
+int buscar_emprestimo(emprestimo *Emprestimos,int pos,char *chave)
+{
+	int i,comparacao,j;
+	
+	
+	for(i=0;i<pos;i++)
+	{
+		
+		for(j=0;j<3;j++)
+		{
+			
+			comparacao = strcmp(Emprestimos[i].chave_emprestimos[j],chave);
+			if(comparacao == 0)
+			{
+				return i;
+			}
+			
+		}
+		
+	}
+	
+	return -1;
+}
+
+int buscar_livro(livro *livros, int pos, char *isbn)
+{
+  int i, result;
+  for(i=0; i<pos; i++)
+  {
+    result = strcmp(livros[i].isbn,isbn);
+    if (result == 0)
+      return i;
+  }
+  return -1;
+}
+void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,int *qtdCadastroLivros,int *qtdCadastroUsers,int *qtdCadastroEmprestimos)
+{
+	system("cls");
+	char cpf[15],isbn[13],dataretirada[7],chave_emprestimos[3][40];
+	
+	struct emprestimo emprestimo;
+	int aut,i;
+	fflush(stdin);
+	printf("Digite o CPF :");
+	gets(cpf);
+	
+	aut = buscar(Usuarios,*qtdCadastroUsers,cpf);
+	if(aut != -1)
+	{
+		fflush(stdin);
+		printf("\nDigite o ISBN do livro :\n");
+		gets(isbn);
+		
+		aut = buscar_livro(livros,*qtdCadastroLivros,isbn);
+		if(aut != -1)
+		{
+			fflush(stdin);
+			printf("Digite a Data de entrada no formato dd/mm/aaaa sem as barras :");
+			gets(dataretirada);
+			strcpy(chave_emprestimos[0],cpf);
+			strcpy(chave_emprestimos[1],isbn);
+			strcpy(chave_emprestimos[2],dataretirada);
+				
+			aut = buscar_emprestimo(Emprestimos,*qtdCadastroEmprestimos,*chave_emprestimos);
+			
+			if (aut == -1)
+			{
+				for(i=0;i<3;i++)
+				{
+					strcpy(emprestimo.chave_emprestimos[i],chave_emprestimos[i]);
+				}
+				
+				
+				fflush(stdin);
+				printf("Digite a data de devolução :\n");
+				gets(emprestimo.datadevolucao);
+				fflush(stdin);
+				printf("Digite o valor de multa por atraso :\n");
+				gets(emprestimo.valormulta);
+				Emprestimos[*qtdCadastroEmprestimos] = emprestimo;
+				(*qtdCadastroEmprestimos)++;
+					
+				printf("\nEmpréstimo cadastrado com sucesso !\n\n");
+			}
+			else
+				printf("Impossivel fazer esse impréstimo !\n");		
+		}
+		else
+			printf("Livro não cadastrado !\n");
+		
+	}else
+		printf("Usuário não cadastrado !\n");
+
+	system("pause");	
+}
+
+
 
 void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 {
@@ -281,18 +386,6 @@ void alterar_usuario(usuario *Vetor,int pos)
 		printf("Usuário não cadastrado !\n\n");
 		system("pause");
 	}
-}
-
-int buscar_livro(livro *livros, int pos, char *isbn)
-{
-  int i, result;
-  for(i=0; i<pos; i++)
-  {
-    result = strcmp(livros[i].isbn,isbn);
-    if (result == 0)
-      return i;
-  }
-  return -1;
 }
 
 void adicionar_livro(livro *livros, int *qtdCadastro)
@@ -591,10 +684,50 @@ void submenu_livros(int *pos)
  	        break;
  	}
 }
+void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
+{
+	system("cls");
+	int op,flag;
+	printf("---------Submenu Emprestimos---------");
+	printf("\n1. Listar todos\n");
+	printf("2. Listar especifico\n");
+	printf("3. Incluir empréstimos\n");
+	printf("4. Alterar empréstimos\n");
+	printf("5. Excluir\n");
+	printf("-----------------------------------\n\n");
+	
+	scanf("%d",&op);
+	switch(op)
+	{
+		case 1:
+			//listarT_usuario(usuarios,*pos);
+			break;
+		case 2:
+			/*flag = listarE_usuario(usuarios,*pos);
+			if (flag == -1)
+				printf("Usuário não cadastrado!\n");
+			system("pause");*/
+			break;
+		case 3:
+			incluir_emprestimo(emprestimos,livros,usuarios,posLivros,posUsers,posEmprestimos);
+			break;
+		case 4:
+			//alterar_usuario(usuarios,*pos);
+			break;
+		case 5:
+			//excluir_usuario(usuarios,pos);
+			break;
+		default:
+			printf("Opção inválida !\n");
+			system("pause");
+			break;
+	}
+}
 
 int main()
 {
-	int op,pos=0;
+	int op;
+	int posLivro = 0,posUsers = 0,posEmprestimos = 0;
 	setlocale(LC_ALL,"Portuguese");
 	
 	do
@@ -603,13 +736,13 @@ int main()
 		switch(op)
 		{
 			case 1:
-				submenu_usuarios(&pos);
+				submenu_usuarios(&posUsers);
 				break;
 			case 2:
-				submenu_livros(&pos);
+				submenu_livros(&posLivro);
 				break;
 			case 3:
-				//submenu_emprestimos();
+				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos);
 				break;
 			case 4:
 				//submenu_relatorios();
