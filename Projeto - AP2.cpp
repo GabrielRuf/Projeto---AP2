@@ -129,8 +129,69 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 	system("pause");	
 }
 
-
-
+void listarT_emprestimos(emprestimo *Emprestimos,int pos)
+{
+	system("cls");
+	int i;
+	
+	if (pos > 0)
+	{
+		for(i=0;i<pos;i++)
+		{
+			printf("Listando %dº empréstimo \n",i+1);
+			printf("CPF :\n");
+			puts(Emprestimos[i].chave_emprestimos[0]);
+			printf("ISBN :\n");
+			puts(Emprestimos[i].chave_emprestimos[1]);
+			printf("Data de retirada :\n");
+			puts(Emprestimos[i].chave_emprestimos[2]);
+			printf("Data de devolução :\n");
+			puts(Emprestimos[i].datadevolucao);
+			printf("Valor de multa por atraso :\n");
+			puts(Emprestimos[i].valormulta);
+		}
+		
+	}
+	else
+		printf("Não existe empréstimo cadastrado!");
+	system("pause");
+	
+}
+int listarE_emprestimos(emprestimo *Emprestimos,int pos)
+{
+	system("cls");
+	int i,achou;
+	char chavetemp[3][40];
+	fflush(stdin);
+	printf("Digite o CPF:\n");
+	gets(chavetemp[0]);
+	printf("Digite o ISBN:\n");
+	gets(chavetemp[1]);
+	printf("Digite a data de retirada:\n");
+	gets(chavetemp[2]);
+	
+	achou = buscar_emprestimo(Emprestimos,pos,*chavetemp);
+	
+	if(achou != -1)
+	{
+		system("cls");
+		printf("listando empréstimo");
+		printf("CPF :\n");
+		puts(Emprestimos[achou].chave_emprestimos[0]);
+		printf("ISBN :\n");
+		puts(Emprestimos[achou].chave_emprestimos[1]);
+		printf("Data de retirada :\n");
+		puts(Emprestimos[achou].chave_emprestimos[2]);
+		printf("Data de devolução :\n");
+		puts(Emprestimos[achou].datadevolucao);
+		printf("Valor de multa por atraso :\n");
+		puts(Emprestimos[achou].valormulta);
+		return 1;
+	}
+	return -1;
+	system("cls");
+	
+}
 void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 {
 	system("cls");
@@ -700,13 +761,14 @@ void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
 	switch(op)
 	{
 		case 1:
-			//listarT_usuario(usuarios,*pos);
+			listarT_emprestimos(emprestimos,*posEmprestimos);
+			
 			break;
 		case 2:
-			/*flag = listarE_usuario(usuarios,*pos);
+			flag = listarE_emprestimos(emprestimos,*posEmprestimos);
 			if (flag == -1)
-				printf("Usuário não cadastrado!\n");
-			system("pause");*/
+				printf("Empréstimo não cadastrado!\n");
+			system("pause");
 			break;
 		case 3:
 			incluir_emprestimo(emprestimos,livros,usuarios,posLivros,posUsers,posEmprestimos);
