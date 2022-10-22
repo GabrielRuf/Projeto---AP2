@@ -35,25 +35,32 @@ int buscar(usuario *Usuarios,int pos,char *cpf)
 
 int buscar_emprestimo(emprestimo *Emprestimos,int pos,char *chave)
 {
-	int i,comparacao,j;
+	int i,comparacao,comparacao2,comparacao3,j=0;
 	
 	
 	for(i=0;i<pos;i++)
 	{
-		
-		for(j=0;j<3;j++)
-		{
-			
 			comparacao = strcmp(Emprestimos[i].chave_emprestimos[j],chave);
 			if(comparacao == 0)
 			{
-				return i;
+				j++;
+				comparacao2 = strcmp(Emprestimos[i].chave_emprestimos[j],chave+40);
+				if(comparacao2 == 0)
+				{
+					j++;
+					comparacao3 = strcmp(Emprestimos[i].chave_emprestimos[j],chave+80);
+					if(comparacao3 == 0)
+					{
+						return i;
+					}
+					else
+						j--;
+						
+				}
+				else
+					j--;
 			}
-			
-		}
-		
 	}
-	
 	return -1;
 }
 
@@ -128,6 +135,149 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 
 	system("pause");	
 }
+
+void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
+{
+	system("cls");
+	int i,achou;
+	char chavetemp[3][40];
+	fflush(stdin);
+	printf("Digite o CPF:\n");
+	gets(chavetemp[0]);
+	printf("Digite o ISBN:\n");
+	gets(chavetemp[1]);
+	printf("Digite a data de retirada:\n");
+	gets(chavetemp[2]);
+	
+	achou = buscar_emprestimo(Emprestimos,*pos,*chavetemp);
+	
+	if(achou != -1)
+	{
+		for(i=0;i<*pos;i++)
+			{
+				Emprestimos[i] = Emprestimos[i+1];
+			}
+			(*pos)--;
+		
+		printf("Empréstimo excluido com sucesso !\n");
+	}
+	else
+		printf("Empréstimo não localizado!\n");
+	system("pause");
+	
+}
+
+void alterar_emprestimos(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,int qtdCadastroLivros,int qtdCadastroUsers,int qtdCadastroEmprestimos)
+{
+	system("cls");
+	int i,achou,op,procurado;
+	char chavetemp[3][40];
+	fflush(stdin);
+	printf("Digite o CPF:\n");
+	gets(chavetemp[0]);
+	printf("Digite o ISBN:\n");
+	gets(chavetemp[1]);
+	printf("Digite a data de retirada:\n");
+	gets(chavetemp[2]);
+	
+	achou = buscar_emprestimo(Emprestimos,qtdCadastroEmprestimos,*chavetemp);
+	
+	if(achou != -1)
+	{
+		do
+		{
+		
+			system("cls");
+			printf("O que deseja alterar ?\n\n");
+			printf("1. CPF\n");
+			printf("2. ISBN\n");
+			printf("3. Data de retirada\n");
+			printf("4. Data de devolução\n");
+			printf("5. Valor de multa por atraso\n\n");
+			scanf("%d",&op);
+			fflush(stdin);
+			switch(op)
+			{
+				case 1:
+					printf("Digite o CPF:\n");
+					gets(chavetemp[0]);
+					procurado = buscar_emprestimo(Emprestimos,qtdCadastroEmprestimos,*chavetemp);
+					if(procurado != -1)
+					{
+						printf("Cadastro indisponível!\n");
+					}
+					else
+					{
+						procurado = buscar(Usuarios,qtdCadastroUsers,chavetemp[0]);
+						if(procurado != -1)
+						{
+							strcpy(Emprestimos[achou].chave_emprestimos[0],chavetemp[0]);
+							printf("Dado alterado !\n");
+						}
+						else
+							printf("CPF não cadastrado!\n");
+						
+					}
+					
+					break;
+				case 2:
+					printf("Digite o ISBN:\n");
+					gets(chavetemp[1]);
+					procurado = buscar_emprestimo(Emprestimos,qtdCadastroEmprestimos,*chavetemp);
+					if(procurado != -1)
+					{
+						printf("Cadastro indisponível!\n");
+					}
+					else
+					{
+						procurado = buscar_livro(livros,qtdCadastroLivros,chavetemp[1]);
+						if(procurado != -1)
+						{
+							strcpy(Emprestimos[achou].chave_emprestimos[1],chavetemp[1]);
+							printf("Dado alterado !\n");
+						}
+						else
+							printf("ISBN não cadastrado!\n");
+					}
+					
+					break;
+				case 3:
+					printf("Digite a data de retirada:\n");
+					gets(chavetemp[2]);
+					procurado = buscar_emprestimo(Emprestimos,qtdCadastroEmprestimos,*chavetemp);
+					if(procurado != -1)
+					{
+						printf("Cadastro indisponível!\n");
+					}
+					else
+					{
+						strcpy(Emprestimos[achou].chave_emprestimos[2],chavetemp[2]);
+						printf("Dado alterado !\n");
+					}
+					
+					break;
+				case 4:
+					printf("Digite a data de devolução :\n");
+					gets(Emprestimos[qtdCadastroEmprestimos].datadevolucao);
+					printf("Dado alterado!\n");
+					
+					break;
+				case 5:
+					printf("Digite o valor de multa por atraso :\n");
+					gets(Emprestimos[qtdCadastroEmprestimos].valormulta);
+					printf("Dado alterado!\n");
+					
+					break;
+				default : printf("Opção inválida!");
+			}
+		}while(op <= 0 || op >=6);
+	}
+	else
+		printf("Empréstimo não localizado!\n");
+	system("pause");
+}
+
+
 
 void listarT_emprestimos(emprestimo *Emprestimos,int pos)
 {
@@ -356,6 +506,7 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 		}
 		
 	}
+	return -1;
 }
 
 void alterar_usuario(usuario *Vetor,int pos)
@@ -774,10 +925,10 @@ void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
 			incluir_emprestimo(emprestimos,livros,usuarios,posLivros,posUsers,posEmprestimos);
 			break;
 		case 4:
-			//alterar_usuario(usuarios,*pos);
+			alterar_emprestimos(emprestimos,livros,usuarios,*posLivros,*posUsers,*posEmprestimos);
 			break;
 		case 5:
-			//excluir_usuario(usuarios,pos);
+			excluir_emprestimos(emprestimos,posEmprestimos);
 			break;
 		default:
 			printf("Opção inválida !\n");
