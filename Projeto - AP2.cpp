@@ -347,7 +347,7 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 	system("cls");
 	char cpf[15];
 	struct usuario user;
-	int aut;
+	int aut,i=0,op;
 	fflush(stdin);
 	printf("Digite o CPF :");
 	gets(cpf);
@@ -367,11 +367,49 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 		printf("Digite o CEP :");
 		gets(user.cep);
 		fflush(stdin);
-		printf("Digite o(s) email(s) :"); //Falta incluir repetição para colocar mais de 1 se quiser!!!
-		gets(user.emails[0]);
+		printf("Digite o email :");
+		gets(user.emails[i]);
+		i++;
 		fflush(stdin);
-		printf("Digite o(s) telefone(s) :"); //Falta incluir repetição para colocar mais de 1 se quiser!!!
-		gets(user.telefone[0]);
+		do
+		{
+			if(i!=3)
+			{
+				printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+				scanf("%d",&op);
+				fflush(stdin);
+				if(op == 1)
+				{
+					printf("Digite o email :");
+					gets(user.emails[i]);
+					i++;
+				}
+			}
+		}while(i != 3 && op != 2);
+		
+		fflush(stdin);
+		i=0;
+		printf("Digite o Telefone :");
+		gets(user.telefone[i]);
+		i++;
+		fflush(stdin);
+		do
+		{
+			
+			if(i!=3)
+			{
+				printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+				scanf("%d",&op);
+				fflush(stdin);
+				if(op == 1)
+				{
+					printf("Digite o Telefone :");
+					gets(user.telefone[i]);
+					i++;
+				}
+			}
+		}while(i != 3 && op != 2);
+		
 		fflush(stdin);
 		printf("Digite o data de nascimento dd/mm/aa :");
 		gets(user.datanasc);
@@ -395,7 +433,7 @@ void listarT_usuario(usuario *Usuarios,int pos)
 {
 	system("cls");
 	
-	int i=0;
+	int i=0,j=0,len;
 	if (pos > 0)
 	{
 		for(i=0;i<pos;i++)
@@ -414,10 +452,18 @@ void listarT_usuario(usuario *Usuarios,int pos)
 			puts(Usuarios[i].cep);
 			printf("\n");
 			printf("Email(s) :\n");
-			puts(Usuarios[i].emails[0]);
+			len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].emails[j]);
+			}
 			printf("\n");
 			printf("Telefone(s) :\n");
-			puts(Usuarios[i].telefone[0]);
+			len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].telefone[j]);
+			}
 			printf("\n");
 			printf("Data de nascimento :\n");
 			puts(Usuarios[i].datanasc);
@@ -438,7 +484,7 @@ void listarT_usuario(usuario *Usuarios,int pos)
 
 int listarE_usuario(usuario *Usuarios,int pos)
 {
-	int i,comparacao;
+	int i,comparacao,len,j;
 	char cpf[30];
 	system("cls");
 	printf("Digite o CPF do usuário :\n");
@@ -465,10 +511,18 @@ int listarE_usuario(usuario *Usuarios,int pos)
 			puts(Usuarios[i].cep);
 			printf("\n");
 			printf("Email(s) :\n");
-			puts(Usuarios[i].emails[0]);
+			len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].emails[j]);
+			}
 			printf("\n");
 			printf("Telefone(s) :\n");
-			puts(Usuarios[i].telefone[0]);
+			len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].telefone[j]);
+			}
 			printf("\n");
 			printf("Data de nascimento :\n");
 			puts(Usuarios[i].datanasc);
@@ -511,8 +565,8 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 
 void alterar_usuario(usuario *Vetor,int pos)
 {
-	char cpf[15];
-	int posicao,op;
+	char cpf[15],cpfNovo[15];
+	int posicao,op,i=0,aut;
 	system("cls");
 	printf("Digite o cpf :\n");
 	fflush(stdin);
@@ -541,8 +595,17 @@ void alterar_usuario(usuario *Vetor,int pos)
 			{
 				case 1:
 					printf("\n\nDigite o novo dado :\n\n");
-					gets(Vetor[posicao].cpf); //Falta verificar se está cadastrado !!
-					printf("Dado alterado com sucesso !\n\n");
+					gets(cpfNovo);
+					aut = buscar(Vetor,pos,cpfNovo);
+					if(aut != -1)
+					{
+						printf("CPF já cadastrado !");
+					}
+					else
+						{
+							strcpy(Vetor[posicao].cpf,cpfNovo);
+							printf("Dado alterado com sucesso !\n\n");
+						}
 					system("pause");
 					break;
 				case 2:
@@ -565,14 +628,49 @@ void alterar_usuario(usuario *Vetor,int pos)
 					break;
 				case 5:
 					printf("\n\nDigite o novo dado :\n\n");
-					gets(Vetor[posicao].emails[0]);
-					printf("Dado alterado com sucesso !\n\n");
+					gets(Vetor[posicao].emails[i]);
+					i++;
+					fflush(stdin);
+					do
+					{
+						if(i!=3)
+						{
+							printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+							scanf("%d",&op);
+							fflush(stdin);
+							if(op == 1)
+							{
+								printf("Digite o email :");
+								gets(Vetor[posicao].emails[i]);
+								i++;
+							}
+						}
+					}while(i != 3 && op != 2);
+					printf("Dado alterado com sucesso\n\n");
 					system("pause");
 					break;
 				case 6:
 					printf("\n\nDigite o novo dado :\n\n");
-					gets(Vetor[posicao].telefone[0]);
-					printf("Dado alterado com sucesso !\n\n");
+					gets(Vetor[posicao].telefone[i]);
+					i++;
+					fflush(stdin);
+					do
+					{
+						
+						if(i!=3)
+						{
+							printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+							scanf("%d",&op);
+							fflush(stdin);
+							if(op == 1)
+							{
+								printf("Digite o Telefone :");
+								gets(Vetor[posicao].telefone[i]);
+								i++;
+							}
+						}
+					}while(i != 3 && op != 2);
+					printf("Dado alterado com sucesso\n\n");
 					system("pause");
 					break;
 				case 7:
@@ -605,7 +703,7 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
   system("cls");
   char isbn[13];
   struct livro book;
-  int aut;
+  int aut,i,op;
   fflush(stdin);
   printf("DIgite o ISBN do livro: ");
   gets(isbn);
@@ -624,8 +722,25 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 	gets(book.genero);
 	
 	fflush(stdin);
-	printf("Digite o autor do livro - Se for mais de um, coloque  / na frente: "); //Falta incluir repetição para colocar mais de 1 se quiser!!!
-	gets(book.autor[0]);
+	printf("Digite o autor :");
+	gets(book.autor[i]);
+	i++;
+	fflush(stdin);
+	do
+		{
+			if(i!=3)
+			{
+				printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+				scanf("%d",&op);
+				fflush(stdin);
+				if (op == 1)
+				{
+					printf("Digite o autor :");
+					gets(book.autor[i]);
+					i++;
+				}
+			}
+		}while(i != 3 && op != 2);
 	
 	fflush(stdin);
 	printf("Digite o número de páginas: ");
@@ -644,7 +759,7 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 void listarT_livro(livro *livros, int pos)
 {
     system("cls");
-    int i=0;
+    int i=0,len,j;
     if (pos >0){
         for (i=0; i<pos; i++){
             printf("Listando %d° livro\n", i+1);
@@ -658,7 +773,11 @@ void listarT_livro(livro *livros, int pos)
             puts(livros[i].genero);
             printf("\n");
             printf("Autor :\n");
-            puts(livros[i].autor[0]);
+            len = sizeof(livros[i].autor)/sizeof(livros[i].autor[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(livros[i].autor[j]);
+			}
             printf("\n");
             printf("Número de páginas :\n");
             puts(livros[i].num_pagina);
@@ -672,7 +791,7 @@ void listarT_livro(livro *livros, int pos)
 }
 
 int listarE_livros(livro *livros, int pos){
-    int i, comparacao;
+    int i, comparacao,len,j;
     char isbn[13];
     system("cls");
     printf("Digite o ISBN do livro: \n");
@@ -694,7 +813,11 @@ int listarE_livros(livro *livros, int pos){
             puts(livros[i].genero);
             printf("\n");
             printf("Autor :\n");
-            puts(livros[i].autor[0]);
+            len = sizeof(livros[i].autor)/sizeof(livros[i].autor[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(livros[i].autor[j]);
+			}
             printf("\n");
             printf("Número de páginas :\n");
             puts(livros[i].num_pagina);
@@ -733,8 +856,8 @@ int excluir_livro(livro *livros,int *pos)
 
 void alterar_livro(livro *Vetor, int pos)
 {
-    char isbn[13];
-    int posicao, op;
+    char isbn[13],isbnNovo[13];
+    int posicao, op,i=0,aut;
     system("cls");
     printf("Digite o ISBN :\n");
     fflush(stdin);
@@ -759,8 +882,17 @@ void alterar_livro(livro *Vetor, int pos)
      		{
      		    case 1:
      		        printf("\n\n Digite o novo dado :\n\n");
-     		        gets(Vetor[posicao].isbn);
-     		        printf("Dado alterado com sucesso !\n\n");
+     		        gets(isbnNovo);
+     		        aut = buscar_livro(Vetor,pos,isbnNovo);
+     		        if (aut != -1)
+     		        {
+     		        	printf("ISBN já cadastrado!\n");
+					}
+					else
+						{
+							strcpy(Vetor[posicao].isbn,isbnNovo);
+							printf("Dado alterado com sucesso !\n\n");
+						}
      		        system("pause");
      		        break;
      		    case 2:
@@ -776,15 +908,32 @@ void alterar_livro(livro *Vetor, int pos)
      		        system("pause");
      		        break;
      		    case 4:
-     		        printf("\n\n Digite o novo dado :\n\n");//Falta incluir repetição para colocar mais de 1 se quiser!!!
-     		        gets(Vetor[posicao].autor[0]);
-     		        printf("Dado alteradocom sucesso !\n\n");
+     		        printf("\n\n Digite o novo dado :\n\n");
+     		        gets(Vetor[posicao].autor[i]);
+					i++;
+					fflush(stdin);
+					do
+						{
+							if(i!=3)
+							{
+								printf("\nAdicionar mais um ?\n1.Sim\n2.Não\n");
+								scanf("%d",&op);
+								fflush(stdin);
+								if (op == 1)
+								{
+									printf("Digite o autor :");
+									gets(Vetor[posicao].autor[i]);
+									i++;
+								}
+							}
+						}while(i != 3 && op != 2);
+     		        printf("Dado alterado com sucesso !\n\n");
      		        system("pause");
      		        break;
      		    case 5:
      		        printf("\n\n Digite o novo dado :\n\n");
      		        gets(Vetor[posicao].num_pagina);
-     		        printf("Dado alteradocom sucesso !\n\n");
+     		        printf("Dado alterado com sucesso !\n\n");
      		        system("pause");
      		        break;
      		    default:
