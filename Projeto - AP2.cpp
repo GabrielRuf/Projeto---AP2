@@ -97,7 +97,7 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 		if(aut != -1)
 		{
 			fflush(stdin);
-			printf("Digite a Data de entrada no formato dd/mm/aaaa sem as barras :");
+			printf("Digite a Data de entrada no formato aaaa/mm/dd sem as barras :");
 			gets(dataretirada);
 			strcpy(chave_emprestimos[0],cpf);
 			strcpy(chave_emprestimos[1],isbn);
@@ -114,7 +114,7 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 				
 				
 				fflush(stdin);
-				printf("Digite a data de devolução :\n");
+				printf("Digite a data de devolução no formato aaaa/mm/dd sem as barras:\n");
 				gets(emprestimo.datadevolucao);
 				fflush(stdin);
 				printf("Digite o valor de multa por atraso :\n");
@@ -949,6 +949,41 @@ void alterar_livro(livro *Vetor, int pos)
     }
 }
 
+void relatorio_c(emprestimo *Emprestimos,int pos)
+{
+	char dataA[15],dataB[15],i;
+	printf("Digite a data inicial aaaa/mm/dd:");
+	fflush(stdin);
+	gets(dataA);
+	printf("Digite a data final aaaa/mm/dd:");
+	fflush(stdin);
+	gets(dataB);
+	
+	for(i=0;i<pos;i++)
+	{
+		if(strcmp(dataA,Emprestimos[i].datadevolucao)<0)
+		{
+			if(strcmp(dataB,Emprestimos[i].datadevolucao)>0)
+			{
+				printf("\n\nlistando empréstimo\n");
+				printf("CPF :\n");
+				puts(Emprestimos[i].chave_emprestimos[0]);
+				printf("ISBN :\n");
+				puts(Emprestimos[i].chave_emprestimos[1]);
+				printf("Data de retirada :\n");
+				puts(Emprestimos[i].chave_emprestimos[2]);
+				printf("Data de devolução :\n");
+				puts(Emprestimos[i].datadevolucao);
+				printf("Valor de multa por atraso :\n");
+				puts(Emprestimos[i].valormulta);
+				system("pause");
+			}
+		}
+	}
+}
+
+
+
 int menu()
 {
 	system("cls");
@@ -1086,6 +1121,11 @@ void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
 	}
 }
 
+void submenu_relatorios(emprestimo *Emprestimos,int *posUsers)
+{
+	relatorio_c(Emprestimos,*posUsers);
+}
+
 int main()
 {
 	int op;
@@ -1107,7 +1147,7 @@ int main()
 				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos);
 				break;
 			case 4:
-				//submenu_relatorios();
+				submenu_relatorios(emprestimos,&posUsers);
 				break;
 			case 5:
 				printf("\nSaindo...");
