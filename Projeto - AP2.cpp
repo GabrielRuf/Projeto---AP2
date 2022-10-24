@@ -32,7 +32,6 @@ int buscar(usuario *Usuarios,int pos,char *cpf)
 	}
 	return -1;
 }
-
 int buscar_emprestimo(emprestimo *Emprestimos,int pos,char *chave)
 {
 	int i,comparacao,comparacao2,comparacao3,j=0;
@@ -63,7 +62,6 @@ int buscar_emprestimo(emprestimo *Emprestimos,int pos,char *chave)
 	}
 	return -1;
 }
-
 int buscar_livro(livro *livros, int pos, char *isbn)
 {
   int i, result;
@@ -135,11 +133,10 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 
 	system("pause");	
 }
-
 void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
 {
 	system("cls");
-	int i,achou;
+	int i,achou,op;
 	char chavetemp[3][40];
 	fflush(stdin);
 	printf("Digite o CPF:\n");
@@ -153,20 +150,39 @@ void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
 	
 	if(achou != -1)
 	{
-		for(i=0;i<*pos;i++)
+		printf("Empréstimo : \n");
+		printf("CPF :\n");
+		puts(Emprestimos[achou].chave_emprestimos[0]);
+		printf("ISBN :\n");
+		puts(Emprestimos[achou].chave_emprestimos[1]);
+		printf("Data de retirada :\n");
+		puts(Emprestimos[achou].chave_emprestimos[2]);
+		printf("Data de devolução :\n");
+		puts(Emprestimos[achou].datadevolucao);
+		printf("Valor de multa por atraso :\n");
+		puts(Emprestimos[achou].valormulta);
+		printf("Confirma ?\n1.Sim\n2.Não\n");
+		scanf("%d",&op);
+		if (op == 1)
+		{
+			for(i=achou;i<*pos;i++)
 			{
 				Emprestimos[i] = Emprestimos[i+1];
 			}
 			(*pos)--;
 		
-		printf("Empréstimo excluido com sucesso !\n");
+			printf("Empréstimo excluido com sucesso !\n");
+		}
+		else
+			printf("Operação cancelada!\n");
+		
+		
 	}
 	else
 		printf("Empréstimo não localizado!\n");
 	system("pause");
 	
 }
-
 void alterar_emprestimos(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,int qtdCadastroLivros,int qtdCadastroUsers,int qtdCadastroEmprestimos)
 {
 	system("cls");
@@ -276,9 +292,6 @@ void alterar_emprestimos(emprestimo *Emprestimos,livro *livros,usuario *Usuarios
 		printf("Empréstimo não localizado!\n");
 	system("pause");
 }
-
-
-
 void listarT_emprestimos(emprestimo *Emprestimos,int pos)
 {
 	system("cls");
@@ -411,7 +424,7 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 		}while(i != 3 && op != 2);
 		
 		fflush(stdin);
-		printf("Digite o data de nascimento dd/mm/aa :");
+		printf("Digite o data de nascimento aaaa/mm/dd sem as barras :");
 		gets(user.datanasc);
 		fflush(stdin);
 		printf("Digite a profissão :");
@@ -428,7 +441,6 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 	
 	system("pause");
 }
-
 void listarT_usuario(usuario *Usuarios,int pos)
 {
 	system("cls");
@@ -481,7 +493,6 @@ void listarT_usuario(usuario *Usuarios,int pos)
 		system("pause");
 	}
 }
-
 int listarE_usuario(usuario *Usuarios,int pos)
 {
 	int i,comparacao,len,j;
@@ -535,34 +546,74 @@ int listarE_usuario(usuario *Usuarios,int pos)
 	}
 	return -1;
 }
-
 int excluir_usuario(usuario *Usuarios,int *pos)
 {
-	int i,comparacao,j;
+	int i,comparacao,j,len,op,achou;
 	char cpf[30];
 	system("cls");
 	printf("Digite o CPF do usuário :\n");
 	fflush(stdin);
 	gets(cpf);
 	
-	for(i=0;i<*pos;i++)
+	achou = buscar(Usuarios,*pos,cpf);
+	if(achou != -1)
 	{
-		comparacao = strcmp(Usuarios[i].cpf,cpf);
-		if(comparacao == 0)
+		printf("Usuário \n");
+		printf("Nome :\n");
+		puts(Usuarios[i].nome);
+		printf("\n");
+		printf("CPF :\n");
+		puts(Usuarios[i].cpf);
+		printf("\n");
+		printf("Número :\n");
+		puts(Usuarios[i].nro);
+		printf("\n");
+		printf("CEP :\n");
+		puts(Usuarios[i].cep);
+		printf("\n");
+		printf("Email(s) :\n");
+		len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
+		for(j=0;j<len;j++)
 		{
-			for(j=0;j<*pos;j++)
+			puts(Usuarios[i].emails[j]);
+		}
+		printf("\n");
+		printf("Telefone(s) :\n");
+		len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
+		for(j=0;j<len;j++)
+		{
+			puts(Usuarios[i].telefone[j]);
+		}
+		printf("\n");
+		printf("Data de nascimento :\n");
+		puts(Usuarios[i].datanasc);
+		printf("\n");
+		printf("Profissão :\n");
+		puts(Usuarios[i].profissao);
+		printf("\n");
+		printf("\n");
+		printf("Confirma ?\n1.Sim\n2.Não\n");
+		scanf("%d",&op);
+		if (op == 1)
+		{
+			for(i=achou;i<*pos;i++)
 			{
-				Usuarios[j] = Usuarios[j+1];
+				Usuarios[i] = Usuarios[i+1];
 			}
 			(*pos)--;
-			
+	
+			printf("Usuário excluido com sucesso !\n");
 			return 1;
 		}
-		
+		else
+		{
+			printf("Operação cancelada!\n");
+			return -1;
+		}
+			
 	}
-	return -1;
+	return -1;	
 }
-
 void alterar_usuario(usuario *Vetor,int pos)
 {
 	char cpf[15],cpfNovo[15];
@@ -674,7 +725,7 @@ void alterar_usuario(usuario *Vetor,int pos)
 					system("pause");
 					break;
 				case 7:
-					printf("\n\nDigite o novo dado :\n\n");
+					printf("\n\nDigite a nova data de nascimento aaaa/mm/dd sem as barras :\n\n");
 					gets(Vetor[posicao].datanasc);
 					printf("Dado alterado com sucesso !\n\n");
 					system("pause");
@@ -697,7 +748,6 @@ void alterar_usuario(usuario *Vetor,int pos)
 		system("pause");
 	}
 }
-
 void adicionar_livro(livro *livros, int *qtdCadastro)
 {
   system("cls");
@@ -755,7 +805,6 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
   	printf("Livro já está cadastrado !\n\n");
   system("pause");
  }
-
 void listarT_livro(livro *livros, int pos)
 {
     system("cls");
@@ -789,7 +838,6 @@ void listarT_livro(livro *livros, int pos)
         system("pause");
     }
 }
-
 int listarE_livros(livro *livros, int pos){
     int i, comparacao,len,j;
     char isbn[13];
@@ -803,7 +851,7 @@ int listarE_livros(livro *livros, int pos){
         if(comparacao == 0){
             system("cls");
             printf("Listando livro \n");
-             printf("Título :\n");
+            printf("Título :\n");
             puts(livros[i].titulo);
             printf("\n");
             printf("ISBN :\n");
@@ -826,34 +874,62 @@ int listarE_livros(livro *livros, int pos){
     }
     return -1;
 }
-
 int excluir_livro(livro *livros,int *pos)  
 {
-	int i,comparacao,j;
+	int i,comparacao,j,achou,len,op;
 	char isbn[13];
 	system("cls");
 	printf("Digite o ISBN do usuário :\n");
 	fflush(stdin);
 	gets(isbn);
 	
-	for(i=0;i<*pos;i++)
+	achou = buscar_livro(livros,*pos,isbn);
+	
+	if(achou != -1)
 	{
-		comparacao = strcmp(livros[i].isbn,isbn);
-		if(comparacao == 0)
+     	printf("Listando livro \n");
+        printf("Título :\n");
+        puts(livros[i].titulo);
+        printf("\n");
+        printf("ISBN :\n");
+        puts(livros[i].isbn);
+        printf("\n");
+        printf("Gênero :\n");
+        puts(livros[i].genero);
+        printf("\n");
+        printf("Autor :\n");
+        len = sizeof(livros[i].autor)/sizeof(livros[i].autor[0]);
+		for(j=0;j<len;j++)
 		{
-			for(j=0;j<*pos;j++)
+			puts(livros[i].autor[j]);
+		}
+        printf("\n");
+        printf("Número de páginas :\n");
+        puts(livros[i].num_pagina);
+        printf("Confirma ?\n1.Sim\n2.Não\n");
+		scanf("%d",&op);
+		if (op == 1)
+		{
+			for(i=achou;i<*pos;i++)
 			{
-				livros[j] = livros[j+1];
+				livros[i] = livros[i+1];
 			}
 			(*pos)--;
-			
-			return 1;
-		}
 		
+			printf("Livro excluido com sucesso !\n");
+		}
+		else
+			printf("Operação cancelada!\n");
+    }
+	else
+	{
+		printf("Empréstimo não localizado!\n");
+		return -1;
 	}
-	
-}
 
+	system("pause");
+
+}
 void alterar_livro(livro *Vetor, int pos)
 {
     char isbn[13],isbnNovo[13];
@@ -948,7 +1024,65 @@ void alterar_livro(livro *Vetor, int pos)
         system("pause");
     }
 }
-
+void relatorio_a(usuario *Usuarios,int pos)
+{
+	int idade,idadeX,idadeUserInt,i,j,len;
+	char idadeUser[5];
+	system("cls");
+	printf("Digite a idade :\n\n");
+	scanf("%d",&idadeX);
+	
+	
+	for(i=0;i<pos;i++)
+	{
+		strncpy(idadeUser,Usuarios[i].datanasc,4);
+		idadeUserInt = atoi(idadeUser);
+		idade = 2022 - idadeUserInt;
+		if (idade > idadeX)
+		{
+			printf("Listando usuário \n");
+			printf("Nome :\n");
+			puts(Usuarios[i].nome);
+			printf("\n");
+			printf("CPF :\n");
+			puts(Usuarios[i].cpf);
+			printf("\n");
+			printf("Número :\n");
+			puts(Usuarios[i].nro);
+			printf("\n");
+			printf("CEP :\n");
+			puts(Usuarios[i].cep);
+			printf("\n");
+			printf("Email(s) :\n");
+			len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].emails[j]);
+			}
+			printf("\n");
+			printf("Telefone(s) :\n");
+			len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
+			for(j=0;j<len;j++)
+			{
+				puts(Usuarios[i].telefone[j]);
+			}
+			printf("\n");
+			printf("Data de nascimento :\n");
+			puts(Usuarios[i].datanasc);
+			printf("\n");
+			printf("Profissão :\n");
+			puts(Usuarios[i].profissao);
+			printf("\n");
+			printf("\n");
+			system("pause");
+		}
+	}
+	
+	
+	
+	
+	
+}
 void relatorio_c(emprestimo *Emprestimos,int pos)
 {
 	char dataA[15],dataB[15],i;
@@ -981,9 +1115,6 @@ void relatorio_c(emprestimo *Emprestimos,int pos)
 		}
 	}
 }
-
-
-
 int menu()
 {
 	system("cls");
@@ -999,8 +1130,6 @@ int menu()
 	scanf("%d",&op);
 	return op;
 }
-
-
 void submenu_usuarios(int *pos)
 {
 	system("cls");
@@ -1121,9 +1250,28 @@ void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
 	}
 }
 
-void submenu_relatorios(emprestimo *Emprestimos,int *posUsers)
+void submenu_relatorios(emprestimo *Emprestimos,int *posUsers,usuario *Usuarios)
 {
-	relatorio_c(Emprestimos,*posUsers);
+	system("cls");
+	int op,flag;
+	printf("---------Submenu Emprestimos---------");
+	printf("\n1. Relatório A\n");
+	printf("2. Relatório B\n");
+	printf("3. Relatório C\n");
+	printf("-----------------------------------\n\n");
+	
+	scanf("%d",&op);
+	switch(op)
+	{
+		case 1:
+			relatorio_a(Usuarios,*posUsers);
+			break;
+		case 3:
+			relatorio_c(Emprestimos,*posUsers);
+			break;
+		default:break;
+	}
+
 }
 
 int main()
@@ -1147,7 +1295,7 @@ int main()
 				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos);
 				break;
 			case 4:
-				submenu_relatorios(emprestimos,&posUsers);
+				submenu_relatorios(emprestimos,&posUsers,usuarios);
 				break;
 			case 5:
 				printf("\nSaindo...");
