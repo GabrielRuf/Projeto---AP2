@@ -837,12 +837,8 @@ void listarT_livro(livro *livros, int pos)
         system("pause");
     }
 }
-<<<<<<< HEAD
 int listarE_livros(livro *livros, int pos)
 {
-=======
-int listarE_livros(livro *livros, int pos){
->>>>>>> 3b5bb453dd2c7749b86706acea7dd89037e434f1
     int i, comparacao,len,j;
     char isbn[13];
     system("cls");
@@ -1081,14 +1077,6 @@ void relatorio_a(usuario *Usuarios,int pos)
 			system("pause");
 		}
 	}
-<<<<<<< HEAD
-=======
-	
-	
-	
-	
-	
->>>>>>> 3b5bb453dd2c7749b86706acea7dd89037e434f1
 }
 void relatorio_c(emprestimo *Emprestimos,int pos)
 {
@@ -1291,11 +1279,8 @@ void submenu_relatorios(emprestimo *Emprestimos,int *posUsers,usuario *Usuarios)
 		case 1:
 			relatorio_a(Usuarios,*posUsers);
 			break;
-<<<<<<< HEAD
 		case 2:
 			//Não fizemos :(
-=======
->>>>>>> 3b5bb453dd2c7749b86706acea7dd89037e434f1
 		case 3:
 			relatorio_c(Emprestimos,*posUsers);
 			break;
