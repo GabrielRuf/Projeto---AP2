@@ -1177,9 +1177,10 @@ void submenu_usuarios(int *pos)
 	}
 	
 	for (i=0; i<*pos; i++) {
-	if (fwrite( &usuarios[i], sizeof (struct usuario), 1, arqUsuarios) != 1) //Salva 1 a 1 no arquivo.
+	if (fwrite( &usuarios[i],sizeof(struct usuario), 1, arqUsuarios) != 1) //Salva 1 a 1 no arquivo.
 		puts("Erro na escrita.");
 	}
+	rewind(arqUsuarios);
 	fclose(arqUsuarios);
 }
 
@@ -1291,7 +1292,8 @@ void submenu_relatorios(emprestimo *Emprestimos,int *posUsers,usuario *Usuarios)
 
 int main()
 {
-	int op,i,n=0,endpoint=0;
+	int op,i=0,n=0,endpoint=0,
+	comeco,fim;
 	int posLivro = 0,posUsers = 0,posEmprestimos = 0;
 	setlocale(LC_ALL,"Portuguese");
 	
@@ -1307,13 +1309,24 @@ int main()
 		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
 	}
 
-	for (i=0; i<10; i++) {
-	if (fread(&usuarios[i], sizeof (struct usuario), 1, arqUsuarios) != 1) 
+	
+	//Verifica a quantida de cadastros
+	
+	fseek(arqUsuarios, 0L, SEEK_END);
+	fim = ftell(arqUsuarios);
+	rewind(arqUsuarios);
+	
+	posUsers = fim/300;
+	
+	
+	
+	
+	for(i=0;i<posUsers;i++)
+	{
+		if (fread(&usuarios[i],sizeof (struct usuario), 1, arqUsuarios) != 1) 
 		{
 			puts("Erro na escrita."); //Verifica se a leitura foi válida
 		}
-		if (feof(arqUsuarios)) break; //Se estiver no final do código, para a verificaçõa por aqui
-		posUsers++; //caso não esteja incrementa posUsers , que se refere a quantidade de cadastros de usuários atuais no vetor
 	}
 	fclose(arqUsuarios);
 	
