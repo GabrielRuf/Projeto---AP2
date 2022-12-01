@@ -6,7 +6,7 @@ struct usuario
 {
 	char nome[40],emails[3][40],telefone[3][15],profissao[40],datanasc[10],cpf[15],nro[15],cep[15];
 	
-}usuarios[20];
+};
 
 struct livro
 {
@@ -433,6 +433,7 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 	
 		Usuarios[*qtdCadastro] = user;
 		(*qtdCadastro)++;
+		Usuarios = (usuario*) realloc (Usuarios,*qtdCadastro * 300);
 		printf("\nUsuário cadastrado com sucesso !\n\n");
 	}
 	else
@@ -484,7 +485,7 @@ void listarT_usuario(usuario *Usuarios,int pos)
 			printf("\n");
 			printf("\n");
 		}
-	system("pause");
+		system("pause");
 	}
 	else
 	{
@@ -559,36 +560,36 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 	{
 		printf("Usuário \n");
 		printf("Nome :\n");
-		puts(Usuarios[i].nome);
+		puts(Usuarios[achou].nome);
 		printf("\n");
 		printf("CPF :\n");
-		puts(Usuarios[i].cpf);
+		puts(Usuarios[achou].cpf);
 		printf("\n");
 		printf("Número :\n");
-		puts(Usuarios[i].nro);
+		puts(Usuarios[achou].nro);
 		printf("\n");
 		printf("CEP :\n");
-		puts(Usuarios[i].cep);
+		puts(Usuarios[achou].cep);
 		printf("\n");
 		printf("Email(s) :\n");
-		len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
+		len = sizeof(Usuarios[achou].emails)/sizeof(Usuarios[achou].emails[0]);
 		for(j=0;j<len;j++)
 		{
-			puts(Usuarios[i].emails[j]);
+			puts(Usuarios[achou].emails[achou]);
 		}
 		printf("\n");
 		printf("Telefone(s) :\n");
-		len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
+		len = sizeof(Usuarios[achou].telefone)/sizeof(Usuarios[achou].telefone[0]);
 		for(j=0;j<len;j++)
 		{
-			puts(Usuarios[i].telefone[j]);
+			puts(Usuarios[achou].telefone[achou]);
 		}
 		printf("\n");
 		printf("Data de nascimento :\n");
-		puts(Usuarios[i].datanasc);
+		puts(Usuarios[achou].datanasc);
 		printf("\n");
 		printf("Profissão :\n");
-		puts(Usuarios[i].profissao);
+		puts(Usuarios[achou].profissao);
 		printf("\n");
 		printf("\n");
 		printf("Confirma ?\n1.Sim\n2.Não\n");
@@ -597,16 +598,19 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 		{
 			for(i=achou;i<*pos;i++)
 			{
-				Usuarios[i] = Usuarios[i+1];
+				Usuarios[achou] = Usuarios[achou+1];
 			}
 			(*pos)--;
+			Usuarios = (usuario*) realloc (Usuarios,*pos * 300);
 	
 			printf("Usuário excluido com sucesso !\n");
+			system("pause");
 			return 1;
 		}
 		else
 		{
 			printf("Operação cancelada!\n");
+			system("pause");
 			return -1;
 		}
 			
@@ -1125,7 +1129,7 @@ int menu()
 	scanf("%d",&op);
 	return op;
 }
-void submenu_usuarios(int *pos)
+void submenu_usuarios(int *pos,usuario *usuarios)
 {
 	system("cls");
 	int op,flag,i;
@@ -1223,7 +1227,7 @@ void submenu_livros(int *pos)
  	        break;
  	}
 }
-void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos)
+void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuario *usuarios)
 {
 	system("cls");
 	int op,flag;
@@ -1318,12 +1322,15 @@ int main()
 	
 	posUsers = fim/300;
 	
+	//Aloca espaço para o vetor
 	
+	usuario *usuarios;
+	usuarios = (usuario*) malloc (posUsers * 300);
 	
-	
+
 	for(i=0;i<posUsers;i++)
 	{
-		if (fread(&usuarios[i],sizeof (struct usuario), 1, arqUsuarios) != 1) 
+		if (fread(&usuarios[i],sizeof(struct usuario), 1, arqUsuarios) != 1) 
 		{
 			puts("Erro na escrita."); //Verifica se a leitura foi válida
 		}
@@ -1336,13 +1343,13 @@ int main()
 		switch(op)
 		{
 			case 1:
-				submenu_usuarios(&posUsers);
+				submenu_usuarios(&posUsers,usuarios);
 				break;
 			case 2:
 				submenu_livros(&posLivro);
 				break;
 			case 3:
-				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos);
+				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos,usuarios);
 				break;
 			case 4:
 				submenu_relatorios(emprestimos,&posUsers,usuarios);
