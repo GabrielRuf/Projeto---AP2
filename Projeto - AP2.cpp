@@ -17,7 +17,7 @@ struct livro
 struct emprestimo
 {
 	char chave_emprestimos[3][40],datadevolucao[10],valormulta[4];
-}emprestimos[20];
+};
 
 
 int buscar(usuario *Usuarios,int pos,char *cpf)
@@ -77,7 +77,7 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 	system("cls");
 	char cpf[15],isbn[13],dataretirada[7],chave_emprestimos[3][40];
 	
-	struct emprestimo emprestimo;
+	struct emprestimo emprestimotemp;
 	int aut,i;
 	fflush(stdin);
 	printf("Digite o CPF :");
@@ -106,19 +106,19 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 			{
 				for(i=0;i<3;i++)
 				{
-					strcpy(emprestimo.chave_emprestimos[i],chave_emprestimos[i]);
+					strcpy(emprestimotemp.chave_emprestimos[i],chave_emprestimos[i]);
 				}
 				
 				
 				fflush(stdin);
 				printf("Digite a data de devolução no formato aaaa/mm/dd sem as barras:\n");
-				gets(emprestimo.datadevolucao);
+				gets(emprestimotemp.datadevolucao);
 				fflush(stdin);
 				printf("Digite o valor de multa por atraso :\n");
-				gets(emprestimo.valormulta);
-				Emprestimos[*qtdCadastroEmprestimos] = emprestimo;
+				gets(emprestimotemp.valormulta);
+				Emprestimos[*qtdCadastroEmprestimos] = emprestimotemp;
 				(*qtdCadastroEmprestimos)++;
-					
+				Emprestimos = (emprestimo*) realloc (Emprestimos,*qtdCadastroEmprestimos * 134);
 				printf("\nEmpréstimo cadastrado com sucesso !\n\n");
 			}
 			else
@@ -169,6 +169,7 @@ void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
 				Emprestimos[i] = Emprestimos[i+1];
 			}
 			(*pos)--;
+			Emprestimos = (emprestimo*) realloc (Emprestimos,*pos * 134);
 		
 			printf("Empréstimo excluido com sucesso !\n");
 		}
@@ -1191,7 +1192,7 @@ void submenu_usuarios(int *pos,usuario *usuarios)
 void submenu_livros(int *pos, livro *livros)
 {
     system("cls");
-    int op, flag;
+    int op, flag,i;
     printf("---------Submenu Livros---------");
     printf("\n1. Listar todos\n");
  	printf("2. Listar especifico\n");
@@ -1229,7 +1230,6 @@ void submenu_livros(int *pos, livro *livros)
  	//Salvando arquivo
 	// Depois de executar alguma função que possivelmente pode modificar o banco de dados de livros,faz a inserção no arquivo
 	FILE *arqLivros;
-	int i;
 	arqLivros = fopen("livros.dat","wb"); //Abre no modo write pos como o vetor já carrega os dados anteriores,podemos excluir e realocalos tranquilamente.
 	
 	if (arqLivros == NULL)
@@ -1245,10 +1245,10 @@ void submenu_livros(int *pos, livro *livros)
 	rewind(arqLivros);
 	fclose(arqLivros);
 }
-void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuario *usuarios,livro *livros)
+void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuario *usuarios,livro *livros,emprestimo *emprestimos)
 {
 	system("cls");
-	int op,flag;
+	int op,flag,i;
 	printf("---------Submenu Emprestimos---------");
 	printf("\n1. Listar todos\n");
 	printf("2. Listar especifico\n");
@@ -1284,6 +1284,25 @@ void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuari
 			system("pause");
 			break;
 	}
+	//Salvando arquivo
+	// Depois de executar alguma função que possivelmente pode modificar o banco de dados de emprestimos,faz a inserção no arquivo
+	FILE *arqEmprestimos;
+	
+	
+	arqEmprestimos = fopen("emprestimos.dat","wb"); //Abre no modo write pos como o vetor já carrega os dados anteriores,podemos excluir e realocalos tranquilamente.
+	
+	if (arqEmprestimos == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
+	
+	for (i=0; i<*posEmprestimos; i++) {
+	if (fwrite( &emprestimos[i],sizeof(struct emprestimo), 1, arqEmprestimos) != 1) //Salva 1 a 1 no arquivo.
+		puts("Erro na escrita.");
+	}
+	rewind(arqEmprestimos);
+	fclose(arqEmprestimos);
 }
 
 void submenu_relatorios(emprestimo *Emprestimos,int *posUsers,usuario *Usuarios)
@@ -1385,6 +1404,40 @@ int main()
 	}
 	fclose(arqLivros);
 	
+	
+	
+	//---------------------------------------EMPRESTIMOS----------------------------------------------//
+	FILE *arqEmprestimos; //Quando iniciar o programa,Carrega o vetor do arquivo binário para dentro do código na vetor global emprestimos[]
+	
+	arqEmprestimos = fopen("emprestimos.dat","rb");
+		
+	if (arqEmprestimos == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
+	//Verifica a quantida de cadastros
+	
+	fseek(arqEmprestimos, 0L, SEEK_END);
+	fim = ftell(arqEmprestimos);
+	rewind(arqEmprestimos);
+	
+	posEmprestimos = fim/134;
+	
+	//Aloca espaço para o vetor
+	
+	emprestimo *emprestimos;
+	emprestimos = (emprestimo*) malloc (posEmprestimos * 134);
+	
+
+	for(i=0;i<posEmprestimos;i++)
+	{
+		if (fread(&emprestimos[i],sizeof(struct emprestimo), 1, arqEmprestimos) != 1) 
+		{
+			puts("Erro na escrita."); //Verifica se a leitura foi válida
+		}
+	}
+	fclose(arqEmprestimos);
 	do
 	{
 		op = menu();
@@ -1397,7 +1450,7 @@ int main()
 				submenu_livros(&posLivro,livros);
 				break;
 			case 3:
-				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos,usuarios,livros);
+				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos,usuarios,livros,emprestimos);
 				break;
 			case 4:
 				submenu_relatorios(emprestimos,&posUsers,usuarios);
