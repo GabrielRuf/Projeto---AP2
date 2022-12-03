@@ -11,7 +11,7 @@ struct usuario
 struct livro
 {
     char titulo[40], genero[40], autor[3][40],isbn[13],num_pagina[5]; 
-}livros[20];
+};
 
 
 struct emprestimo
@@ -803,6 +803,7 @@ void adicionar_livro(livro *livros, int *qtdCadastro)
 	
 	livros[*qtdCadastro] = book;
 	(*qtdCadastro)++;
+	livros = (livro*) realloc (livros,*qtdCadastro * 218);
   }
   else
   	printf("Livro já está cadastrado !\n\n");
@@ -893,33 +894,33 @@ int excluir_livro(livro *livros,int *pos)
 	{
      	printf("Listando livro \n");
         printf("Título :\n");
-        puts(livros[i].titulo);
+        puts(livros[achou].titulo);
         printf("\n");
         printf("ISBN :\n");
-        puts(livros[i].isbn);
+        puts(livros[achou].isbn);
         printf("\n");
         printf("Gênero :\n");
-        puts(livros[i].genero);
+        puts(livros[achou].genero);
         printf("\n");
         printf("Autor :\n");
-        len = sizeof(livros[i].autor)/sizeof(livros[i].autor[0]);
+        len = sizeof(livros[achou].autor)/sizeof(livros[achou].autor[0]);
 		for(j=0;j<len;j++)
 		{
-			puts(livros[i].autor[j]);
+			puts(livros[achou].autor[j]);
 		}
         printf("\n");
         printf("Número de páginas :\n");
-        puts(livros[i].num_pagina);
+        puts(livros[achou].num_pagina);
         printf("Confirma ?\n1.Sim\n2.Não\n");
 		scanf("%d",&op);
 		if (op == 1)
 		{
 			for(i=achou;i<*pos;i++)
 			{
-				livros[i] = livros[i+1];
+				livros[achou] = livros[achou+1];
 			}
 			(*pos)--;
-		
+			livros = (livro*) realloc (livros,*pos * 218);
 			printf("Livro excluido com sucesso !\n");
 		}
 		else
@@ -927,10 +928,9 @@ int excluir_livro(livro *livros,int *pos)
     }
 	else
 	{
-		printf("Empréstimo não localizado!\n");
+		printf("Livro não localizado!\n");
 		return -1;
 	}
-
 	system("pause");
 
 }
@@ -1188,7 +1188,7 @@ void submenu_usuarios(int *pos,usuario *usuarios)
 	fclose(arqUsuarios);
 }
 
-void submenu_livros(int *pos)
+void submenu_livros(int *pos, livro *livros)
 {
     system("cls");
     int op, flag;
@@ -1226,8 +1226,26 @@ void submenu_livros(int *pos)
  	        system("pause");
  	        break;
  	}
+ 	//Salvando arquivo
+	// Depois de executar alguma função que possivelmente pode modificar o banco de dados de livros,faz a inserção no arquivo
+	FILE *arqLivros;
+	int i;
+	arqLivros = fopen("livros.dat","wb"); //Abre no modo write pos como o vetor já carrega os dados anteriores,podemos excluir e realocalos tranquilamente.
+	
+	if (arqLivros == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
+	
+	for (i=0; i<*pos; i++) {
+	if (fwrite( &livros[i],sizeof(struct livro), 1, arqLivros) != 1) //Salva 1 a 1 no arquivo.
+		puts("Erro na escrita.");
+	}
+	rewind(arqLivros);
+	fclose(arqLivros);
 }
-void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuario *usuarios)
+void submenu_emprestimos(int *posLivros,int *posUsers,int *posEmprestimos,usuario *usuarios,livro *livros)
 {
 	system("cls");
 	int op,flag;
@@ -1302,7 +1320,7 @@ int main()
 	setlocale(LC_ALL,"Portuguese");
 	
 	
-	
+	//---------------------------------------USUARIOS----------------------------------------------------//
 	FILE *arqUsuarios; //Quando iniciar o programa,Carrega o vetor do arquivo binário para dentro do código na vetor global usuarios[]
 	
 	arqUsuarios = fopen("usuarios.dat","rb");
@@ -1312,8 +1330,6 @@ int main()
 		printf("Não foi possivel abrir o arquivo!");
 		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
 	}
-
-	
 	//Verifica a quantida de cadastros
 	
 	fseek(arqUsuarios, 0L, SEEK_END);
@@ -1336,6 +1352,38 @@ int main()
 		}
 	}
 	fclose(arqUsuarios);
+	//---------------------------------------LIVROS----------------------------------------------------//
+	FILE *arqLivros; //Quando iniciar o programa,Carrega o vetor do arquivo binário para dentro do código na vetor global livros[]
+	
+	arqLivros = fopen("livros.dat","rb");
+		
+	if (arqLivros == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
+	//Verifica a quantida de cadastros
+	
+	fseek(arqLivros, 0L, SEEK_END);
+	fim = ftell(arqLivros);
+	rewind(arqLivros);
+	
+	posLivro = fim/218;
+	
+	//Aloca espaço para o vetor
+	
+	livro *livros;
+	livros = (livro*) malloc (posLivro * 218);
+	
+
+	for(i=0;i<posLivro;i++)
+	{
+		if (fread(&livros[i],sizeof(struct livro), 1, arqLivros) != 1) 
+		{
+			puts("Erro na escrita."); //Verifica se a leitura foi válida
+		}
+	}
+	fclose(arqLivros);
 	
 	do
 	{
@@ -1346,10 +1394,10 @@ int main()
 				submenu_usuarios(&posUsers,usuarios);
 				break;
 			case 2:
-				submenu_livros(&posLivro);
+				submenu_livros(&posLivro,livros);
 				break;
 			case 3:
-				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos,usuarios);
+				submenu_emprestimos(&posLivro,&posUsers,&posEmprestimos,usuarios,livros);
 				break;
 			case 4:
 				submenu_relatorios(emprestimos,&posUsers,usuarios);
