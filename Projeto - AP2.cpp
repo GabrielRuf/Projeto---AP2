@@ -2,10 +2,14 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+struct data
+{
+	int ano,mes,dia;
+};
 struct usuario
 {
-	char nome[40],emails[3][40],telefone[3][15],profissao[40],datanasc[10],cpf[15],nro[15],cep[15];
-	
+	char nome[40],emails[3][40],telefone[3][15],profissao[40],cpf[15],nro[15],cep[15];
+	data nascimento;
 };
 
 struct livro
@@ -16,8 +20,10 @@ struct livro
 
 struct emprestimo
 {
-	char chave_emprestimos[3][40],datadevolucao[10],valormulta[4];
+	char chave_emprestimos[3][40],valormulta[4];
+	data devolucao;
 };
+
 
 
 int buscar(usuario *Usuarios,int pos,char *cpf)
@@ -94,7 +100,7 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 		if(aut != -1)
 		{
 			fflush(stdin);
-			printf("Digite a Data de entrada no formato aaaa/mm/dd sem as barras :");
+			printf("Digite a Data de entrada no formato dd/mm/aaaa sem as barras:\n");
 			gets(dataretirada);
 			strcpy(chave_emprestimos[0],cpf);
 			strcpy(chave_emprestimos[1],isbn);
@@ -111,14 +117,20 @@ void incluir_emprestimo(emprestimo *Emprestimos,livro *livros,usuario *Usuarios,
 				
 				
 				fflush(stdin);
-				printf("Digite a data de devolução no formato aaaa/mm/dd sem as barras:\n");
-				gets(emprestimotemp.datadevolucao);
+				printf("Digite o dia da data de devolução: \n");
+				scanf("%d",&emprestimotemp.devolucao.dia);
+				fflush(stdin);
+				printf("Digite o mês da data de devolução: \n");
+				scanf("%d",&emprestimotemp.devolucao.mes);
+				fflush(stdin);
+				printf("Digite o ano da data de devolução: \n");
+				scanf("%d",&emprestimotemp.devolucao.ano);
 				fflush(stdin);
 				printf("Digite o valor de multa por atraso :\n");
 				gets(emprestimotemp.valormulta);
 				Emprestimos[*qtdCadastroEmprestimos] = emprestimotemp;
 				(*qtdCadastroEmprestimos)++;
-				Emprestimos = (emprestimo*) realloc (Emprestimos,*qtdCadastroEmprestimos * 134);
+				Emprestimos = (emprestimo*) realloc (Emprestimos,*qtdCadastroEmprestimos * 136);
 				printf("\nEmpréstimo cadastrado com sucesso !\n\n");
 			}
 			else
@@ -157,7 +169,7 @@ void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
 		printf("Data de retirada :\n");
 		puts(Emprestimos[achou].chave_emprestimos[2]);
 		printf("Data de devolução :\n");
-		puts(Emprestimos[achou].datadevolucao);
+		printf("%d/%d/%d",Emprestimos[achou].devolucao.dia,Emprestimos[achou].devolucao.mes,Emprestimos[achou].devolucao.ano);
 		printf("Valor de multa por atraso :\n");
 		puts(Emprestimos[achou].valormulta);
 		printf("Confirma ?\n1.Sim\n2.Não\n");
@@ -169,7 +181,7 @@ void excluir_emprestimos(emprestimo *Emprestimos,int *pos)
 				Emprestimos[i] = Emprestimos[i+1];
 			}
 			(*pos)--;
-			Emprestimos = (emprestimo*) realloc (Emprestimos,*pos * 134);
+			Emprestimos = (emprestimo*) realloc (Emprestimos,*pos * 136);
 		
 			printf("Empréstimo excluido com sucesso !\n");
 		}
@@ -273,8 +285,16 @@ void alterar_emprestimos(emprestimo *Emprestimos,livro *livros,usuario *Usuarios
 					
 					break;
 				case 4:
-					printf("Digite a data de devolução :\n");
-					gets(Emprestimos[qtdCadastroEmprestimos].datadevolucao);
+					fflush(stdin);
+					printf("Digite o dia da data de devolução: \n");
+					scanf("%d",&Emprestimos[achou].devolucao.dia);
+					fflush(stdin);
+					printf("Digite o mês da data de devolução: \n");
+					scanf("%d",&Emprestimos[achou].devolucao.mes);
+					fflush(stdin);
+					printf("Digite o ano da data de devolução: \n");
+					scanf("%d",&Emprestimos[achou].devolucao.ano);
+					fflush(stdin);
 					printf("Dado alterado!\n");
 					
 					break;
@@ -309,7 +329,7 @@ void listarT_emprestimos(emprestimo *Emprestimos,int pos)
 			printf("Data de retirada :\n");
 			puts(Emprestimos[i].chave_emprestimos[2]);
 			printf("Data de devolução :\n");
-			puts(Emprestimos[i].datadevolucao);
+			printf("%d/%d/%d\n",Emprestimos[i].devolucao.dia,Emprestimos[i].devolucao.mes,Emprestimos[i].devolucao.ano);
 			printf("Valor de multa por atraso :\n");
 			puts(Emprestimos[i].valormulta);
 		}
@@ -338,7 +358,7 @@ int listarE_emprestimos(emprestimo *Emprestimos,int pos)
 	if(achou != -1)
 	{
 		system("cls");
-		printf("listando empréstimo");
+		printf("listando empréstimo\n");
 		printf("CPF :\n");
 		puts(Emprestimos[achou].chave_emprestimos[0]);
 		printf("ISBN :\n");
@@ -346,8 +366,7 @@ int listarE_emprestimos(emprestimo *Emprestimos,int pos)
 		printf("Data de retirada :\n");
 		puts(Emprestimos[achou].chave_emprestimos[2]);
 		printf("Data de devolução :\n");
-		puts(Emprestimos[achou].datadevolucao);
-		printf("Valor de multa por atraso :\n");
+		printf("%d/%d/%d\n",Emprestimos[achou].devolucao.dia,Emprestimos[achou].devolucao.mes,Emprestimos[achou].devolucao.ano);
 		puts(Emprestimos[achou].valormulta);
 		return 1;
 	}
@@ -424,8 +443,14 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 		}while(i != 3 && op != 2);
 		
 		fflush(stdin);
-		printf("Digite o data de nascimento aaaa/mm/dd sem as barras :");
-		gets(user.datanasc);
+		printf("Digite o dia da data de nascimento: \n");
+		scanf("%d",&user.nascimento.dia);
+		fflush(stdin);
+		printf("Digite o mês da data de nascimento: \n");
+		scanf("%d",&user.nascimento.mes);
+		fflush(stdin);
+		printf("Digite o ano da data de nascimento: \n");
+		scanf("%d",&user.nascimento.ano);
 		fflush(stdin);
 		printf("Digite a profissão :");
 		gets(user.profissao);
@@ -434,7 +459,7 @@ void incluir_usuario(usuario *Usuarios,int *qtdCadastro)
 	
 		Usuarios[*qtdCadastro] = user;
 		(*qtdCadastro)++;
-		Usuarios = (usuario*) realloc (Usuarios,*qtdCadastro * 300);
+		Usuarios = (usuario*) realloc (Usuarios,*qtdCadastro * 302);
 		printf("\nUsuário cadastrado com sucesso !\n\n");
 	}
 	else
@@ -479,7 +504,7 @@ void listarT_usuario(usuario *Usuarios,int pos)
 			}
 			printf("\n");
 			printf("Data de nascimento :\n");
-			puts(Usuarios[i].datanasc);
+			printf("%d/%d/%d",Usuarios[i].nascimento.dia,Usuarios[i].nascimento.mes,Usuarios[i].nascimento.ano);
 			printf("\n");
 			printf("Profissão :\n");
 			puts(Usuarios[i].profissao);
@@ -537,7 +562,7 @@ int listarE_usuario(usuario *Usuarios,int pos)
 			}
 			printf("\n");
 			printf("Data de nascimento :\n");
-			puts(Usuarios[i].datanasc);
+			printf("%d/%d/%d",Usuarios[i].nascimento.dia,Usuarios[i].nascimento.mes,Usuarios[i].nascimento.ano);
 			printf("\n");
 			printf("Profissão :\n");
 			puts(Usuarios[i].profissao);
@@ -587,7 +612,7 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 		}
 		printf("\n");
 		printf("Data de nascimento :\n");
-		puts(Usuarios[achou].datanasc);
+		printf("%d/%d/%d",Usuarios[achou].nascimento.dia,Usuarios[achou].nascimento.mes,Usuarios[achou].nascimento.ano);
 		printf("\n");
 		printf("Profissão :\n");
 		puts(Usuarios[achou].profissao);
@@ -602,7 +627,7 @@ int excluir_usuario(usuario *Usuarios,int *pos)
 				Usuarios[achou] = Usuarios[achou+1];
 			}
 			(*pos)--;
-			Usuarios = (usuario*) realloc (Usuarios,*pos * 300);
+			Usuarios = (usuario*) realloc (Usuarios,*pos * 302);
 	
 			printf("Usuário excluido com sucesso !\n");
 			system("pause");
@@ -729,8 +754,16 @@ void alterar_usuario(usuario *Vetor,int pos)
 					system("pause");
 					break;
 				case 7:
-					printf("\n\nDigite a nova data de nascimento aaaa/mm/dd sem as barras :\n\n");
-					gets(Vetor[posicao].datanasc);
+					fflush(stdin);
+					printf("Digite o dia da data de nascimento: \n");
+					scanf("%d",&Vetor[posicao].nascimento.dia);
+					fflush(stdin);
+					printf("Digite o mês da data de nascimento: \n");
+					scanf("%d",&Vetor[posicao].nascimento.mes);
+					fflush(stdin);
+					printf("Digite o ano da data de nascimento: \n");
+					scanf("%d",&Vetor[posicao].nascimento.ano);
+					fflush(stdin);
 					printf("Dado alterado com sucesso !\n\n");
 					system("pause");
 					break;
@@ -1031,89 +1064,130 @@ void alterar_livro(livro *Vetor, int pos)
 }
 void relatorio_a(usuario *Usuarios,int pos)
 {
-	int idade,idadeX,idadeUserInt,i,j,len;
-	char idadeUser[5];
-	system("cls");
-	printf("Digite a idade :\n\n");
+	int i,j,len,dataresult,idadeX;
+	
+	printf("Digite a idade:\n");
 	scanf("%d",&idadeX);
 	
+	FILE *RelatorioA;
+	RelatorioA = fopen("RelatorioA.txt","w+");
+	if (RelatorioA == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
 	
 	for(i=0;i<pos;i++)
 	{
-		strncpy(idadeUser,Usuarios[i].datanasc,4);
-		idadeUserInt = atoi(idadeUser);
-		idade = 2022 - idadeUserInt;
-		if (idade > idadeX)
+		dataresult = 2022 - Usuarios[i].nascimento.ano;
+		if (dataresult > idadeX)
 		{
-			printf("Listando usuário \n");
-			printf("Nome :\n");
-			puts(Usuarios[i].nome);
-			printf("\n");
-			printf("CPF :\n");
-			puts(Usuarios[i].cpf);
-			printf("\n");
-			printf("Número :\n");
-			puts(Usuarios[i].nro);
-			printf("\n");
-			printf("CEP :\n");
-			puts(Usuarios[i].cep);
-			printf("\n");
-			printf("Email(s) :\n");
+			fprintf(RelatorioA,"Listando usuário \n");
+			fprintf(RelatorioA,"Nome :\n");
+			fputs(Usuarios[i].nome,RelatorioA);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"CPF :\n");
+			fputs(Usuarios[i].cpf,RelatorioA);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"Número :\n");
+			fputs(Usuarios[i].nro,RelatorioA);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"CEP :\n");
+			fputs(Usuarios[i].cep,RelatorioA);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"Email(s) :\n");
 			len = sizeof(Usuarios[i].emails)/sizeof(Usuarios[i].emails[0]);
 			for(j=0;j<len;j++)
 			{
-				puts(Usuarios[i].emails[j]);
+				fputs(Usuarios[i].emails[j],RelatorioA);
 			}
-			printf("\n");
-			printf("Telefone(s) :\n");
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"Telefone(s) :\n");
 			len = sizeof(Usuarios[i].telefone)/sizeof(Usuarios[i].telefone[0]);
 			for(j=0;j<len;j++)
 			{
-				puts(Usuarios[i].telefone[j]);
+				fputs(Usuarios[i].telefone[j],RelatorioA);
 			}
-			printf("\n");
-			printf("Data de nascimento :\n");
-			puts(Usuarios[i].datanasc);
-			printf("\n");
-			printf("Profissão :\n");
-			puts(Usuarios[i].profissao);
-			printf("\n");
-			printf("\n");
-			system("pause");
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"Data de nascimento :\n");
+			fprintf(RelatorioA,"%d/%d/%d\n",Usuarios[i].nascimento.dia,Usuarios[i].nascimento.mes,Usuarios[i].nascimento.ano);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"Profissão :\n");
+			fputs(Usuarios[i].profissao,RelatorioA);
+			fprintf(RelatorioA,"\n");
+			fprintf(RelatorioA,"\n");
 		}
 	}
 }
+void relatorio_b()
+{
+}
 void relatorio_c(emprestimo *Emprestimos,int pos)
 {
-	char dataA[15],dataB[15],i;
-	printf("Digite a data inicial aaaa/mm/dd:");
-	fflush(stdin);
-	gets(dataA);
-	printf("Digite a data final aaaa/mm/dd:");
-	fflush(stdin);
-	gets(dataB);
+	data dataX,dataY;
+	int i;
+	char dia[3],mes[3],ano[5];
+	FILE *RelatorioC;
+	RelatorioC = fopen("RelatorioC.txt","w+");
+	if (RelatorioC == NULL)
+	{
+		printf("Não foi possivel abrir o arquivo!");
+		exit(0); //Se o arquivo for nulo por algum motivo, para o programa
+	}
 	
+	printf("Digite o dia da data X:\n");
+	scanf("%d",&dataX.dia);
+	fflush(stdin);
+	printf("Digite o mes da data X:\n");
+	scanf("%d",&dataX.mes);
+	fflush(stdin);
+	printf("Digite o ano da data X:\n");
+	scanf("%d",&dataX.ano);
+	fflush(stdin);
+	
+	printf("Digite o dia da data Y:\n");
+	scanf("%d",&dataY.dia);
+	fflush(stdin);
+	printf("Digite o mes da data Y:\n");
+	scanf("%d",&dataY.mes);
+	fflush(stdin);
+	printf("Digite o ano da data Y:\n");
+	scanf("%d",&dataY.ano);
+	fflush(stdin);
 	for(i=0;i<pos;i++)
 	{
-		if(strcmp(dataA,Emprestimos[i].datadevolucao)<0)
+		if(Emprestimos[i].devolucao.ano <= dataX.ano)
 		{
-			if(strcmp(dataB,Emprestimos[i].datadevolucao)>0)
+			if(Emprestimos[i].devolucao.mes <= dataX.mes)
 			{
-				printf("\n\nlistando empréstimo\n");
-				printf("CPF :\n");
-				puts(Emprestimos[i].chave_emprestimos[0]);
-				printf("ISBN :\n");
-				puts(Emprestimos[i].chave_emprestimos[1]);
-				printf("Data de retirada :\n");
-				puts(Emprestimos[i].chave_emprestimos[2]);
-				printf("Data de devolução :\n");
-				puts(Emprestimos[i].datadevolucao);
-				printf("Valor de multa por atraso :\n");
-				puts(Emprestimos[i].valormulta);
-				system("pause");
+				if(Emprestimos[i].devolucao.dia <= dataX.dia)
+				{
+					if(Emprestimos[i].devolucao.ano >= dataY.ano)
+					{
+						if(Emprestimos[i].devolucao.mes <= dataY.mes)
+						{
+							if(Emprestimos[i].devolucao.dia <= dataY.dia)
+							{
+								fputs("\nlistando empréstimo\n",RelatorioC);
+								fprintf(RelatorioC,"CPF :\n");
+								fputs(Emprestimos[i].chave_emprestimos[0],RelatorioC);
+								fprintf(RelatorioC,"\nISBN :\n");
+								fputs(Emprestimos[i].chave_emprestimos[1],RelatorioC);
+								fprintf(RelatorioC,"\nData de retirada :\n");
+								fputs(Emprestimos[i].chave_emprestimos[2],RelatorioC);
+								fprintf(RelatorioC,"\nData de devolução :\n");
+								fprintf(RelatorioC,"\n%d/%d/%d\n",Emprestimos[i].devolucao.dia,Emprestimos[i].devolucao.mes,Emprestimos[i].devolucao.ano);
+								fputs(Emprestimos[i].valormulta,RelatorioC);
+							}
+						}
+					}	
+				}
 			}
 		}
 	}
+	
+
+	fclose(RelatorioC);
 }
 int menu()
 {
@@ -1355,12 +1429,12 @@ int main()
 	fim = ftell(arqUsuarios);
 	rewind(arqUsuarios);
 	
-	posUsers = fim/300;
+	posUsers = fim/302;
 	
 	//Aloca espaço para o vetor
 	
 	usuario *usuarios;
-	usuarios = (usuario*) malloc (posUsers * 300);
+	usuarios = (usuario*) malloc (posUsers * 302);
 	
 
 	for(i=0;i<posUsers;i++)
@@ -1422,12 +1496,12 @@ int main()
 	fim = ftell(arqEmprestimos);
 	rewind(arqEmprestimos);
 	
-	posEmprestimos = fim/134;
+	posEmprestimos = fim/136;
 	
 	//Aloca espaço para o vetor
 	
 	emprestimo *emprestimos;
-	emprestimos = (emprestimo*) malloc (posEmprestimos * 134);
+	emprestimos = (emprestimo*) malloc (posEmprestimos * 136);
 	
 
 	for(i=0;i<posEmprestimos;i++)
